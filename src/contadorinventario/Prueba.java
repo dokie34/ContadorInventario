@@ -11,4 +11,5 @@ package contadorinventario;
  */
 public class Prueba {
     
+   System.out.println("Flavio es GAY");
 }
