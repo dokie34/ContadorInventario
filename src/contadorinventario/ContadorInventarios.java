@@ -9,7 +9,7 @@ package contadorinventario;
  *
  * @author PowerBaware
  */
-public class ContadorInventario {
+public class ContadorInventarios {
 
     /**
      * @param args the command line arguments
