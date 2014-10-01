@@ -182,11 +182,13 @@ public class Contador extends javax.swing.JFrame {
                 cont=String.valueOf(valor);
                 tabla.put(codigo, cont);
                 jLabel2.setText("");
+                jLabel1.setText("");
                 jLabel2.setText("<html>ARTÍCULO AGREGADO <br><br>Código:"+codigo+" \t Cantidad:"+cont+"</html");
             } else {
                 cont=String.valueOf("1");
                 tabla.put(codigo, cont);
                 jLabel2.setText("");
+                jLabel1.setText("");
                 jLabel2.setText("<html>ARTÍCULO AGREGADO <br><br>Código:"+codigo+" \t Cantidad:"+cont+"</html");
             }
             
@@ -212,21 +214,24 @@ public class Contador extends javax.swing.JFrame {
 
             if (tabla.get(codigo)!=null ){
                 valor=Integer.parseInt(tabla.get(codigo));
-                if (valor>1){
+                if (valor>0){
                     valor--;
                     cont=String.valueOf(valor);
                     tabla.put(codigo, cont);
                     jLabel1.setText("");
+                    jLabel2.setText("");
                     jLabel1.setText("<html>ARTÍCULO ELIMINADO <br><br>Código:"+codigo+" \t Cantidad:"+cont+"</html");
                 }else{
                     tabla.remove(codigo);
                     jLabel1.setText("");
+                    jLabel2.setText("");
                     jLabel1.setText("El artículo solicitado no existe");
                 }
             } else {
                 //cont=String.valueOf("1");
                 //tabla.put(codigo, cont);
                 jLabel1.setText("");
+                jLabel2.setText("");
                 jLabel1.setText("El artículo solicitado no existe");
             }
             
