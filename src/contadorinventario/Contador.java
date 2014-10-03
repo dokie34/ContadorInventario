@@ -18,16 +18,27 @@ import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import au.com.bytecode.opencsv.*;
+import static com.sun.org.apache.xalan.internal.xsltc.compiler.sym.EOF;
+import de.javasoft.plaf.synthetica.SyntheticaBlackEyeLookAndFeel;
+import de.javasoft.plaf.synthetica.SyntheticaBlueIceLookAndFeel;
+import de.javasoft.plaf.synthetica.SyntheticaLookAndFeel;
+import de.javasoft.plaf.synthetica.SyntheticaSilverMoonLookAndFeel;
+import java.awt.Color;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  *
@@ -49,7 +60,27 @@ public class Contador extends javax.swing.JFrame {
     public Contador() {
         initComponents();
         
+        this.getContentPane().setBackground(Color.DARK_GRAY);
+        jPanel1.setBackground(Color.DARK_GRAY);
+        jLabel1.setForeground(Color.WHITE);
+
+        
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+ 
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                close();
+            }
+        });
     }
+    
+ 
+    private void close(){
+        if (JOptionPane.showConfirmDialog(rootPane, "¿Desea realmente salir del sistema?",
+                "Salir del sistema", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+            System.exit(0);
+    }         
     
     public void imprimir(){
         String auxLlaves,auxValores;
@@ -110,9 +141,9 @@ public class Contador extends javax.swing.JFrame {
 
         jMenuItem2.setText("jMenuItem2");
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Contador de artículos");
-        setPreferredSize(new java.awt.Dimension(1000, 500));
+        setPreferredSize(null);
         setResizable(false);
         addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -120,7 +151,7 @@ public class Contador extends javax.swing.JFrame {
             }
         });
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Agregar artículos", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Century Schoolbook L", 1, 12))); // NOI18N
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Agregar artículos", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.ABOVE_TOP, new java.awt.Font("SansSerif", 1, 18), java.awt.Color.white)); // NOI18N
         jPanel1.setToolTipText("");
         jPanel1.setName(""); // NOI18N
 
@@ -137,7 +168,7 @@ public class Contador extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jLabel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -221,7 +252,7 @@ public class Contador extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -282,19 +313,21 @@ public class Contador extends javax.swing.JFrame {
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(30, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(33, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 21, Short.MAX_VALUE)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(43, 43, 43))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(46, 46, 46)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -399,16 +432,7 @@ public class Contador extends javax.swing.JFrame {
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
         // TODO add your handling code here:
-        Object [] opciones ={"Aceptar","Cancelar"};
-        int eleccion = JOptionPane.showOptionDialog(rootPane,"¿En realidad desea salir de la aplicacion?",
-        "Confirmar",
-        JOptionPane.YES_NO_OPTION,
-        JOptionPane.QUESTION_MESSAGE,null,opciones,"Aceptar");
-        
-        if (eleccion == JOptionPane.YES_OPTION){
-            System.exit(0);
-        }else{
-        }
+        close();
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
@@ -475,7 +499,7 @@ public class Contador extends javax.swing.JFrame {
                 }
                 writer.close(); 
 
-                JOptionPane.showMessageDialog(rootPane, "Lista exportada", "Hecho" , WIDTH);
+                JOptionPane.showMessageDialog(rootPane, "Lista guardad", "Hecho" , WIDTH);
 
             } catch (IOException ex) {
                 Logger.getLogger(Contador.class.getName()).log(Level.SEVERE, null, ex);
@@ -488,6 +512,7 @@ public class Contador extends javax.swing.JFrame {
         // TODO add your handling code here:
         CSVReader reader;
         String auxLlaves,auxValores;
+        String[] linea;
         Enumeration<String> llaves =tabla.keys();
         Enumeration<String> valores = tabla.elements();
         
@@ -499,23 +524,15 @@ public class Contador extends javax.swing.JFrame {
             try {
 
                 reader = new CSVReader(new FileReader(archivo), '\t');
-                //String[] encabezados="Codigo#Descripcion#Precio Costo#Precio Venta#Precio Mayoreo#Existencia#Inv. Minimo#Departamento".split("#");
-                //writer.writeNext(encabezados);
-                System.out.println(reader.readAll().toString());
-//                while (archivo.) {
-//                    auxLlaves = llaves.nextElement();
-//                    auxValores = valores.nextElement();
-//                    String CadAux=auxLlaves+"#"+auxValores;
-//                    String[] entries = CadAux.split("#");
-//                    writer.writeNext(entries);
-//                }
-//                writer.close(); 
 
-                //JOptionPane.showMessageDialog(rootPane, "Lista exportada", "Hecho" , WIDTH);
+                while ((linea=reader.readNext())!=null) {
+                        tabla.put(linea[0], linea[1]);
+                }
+                imprimir();
 
             } catch (IOException ex) {
                 Logger.getLogger(Contador.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(rootPane, "No se pudo guardar tu archivo, inténtalo otra vez" , "Advertencia", WIDTH);
+                JOptionPane.showMessageDialog(rootPane, "No se pudo abrir tu archivo, inténtalo otra vez" , "Advertencia", WIDTH);
             }
         }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
@@ -553,12 +570,9 @@ public class Contador extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+
             public void run() {
                 new Contador().setVisible(true);
-                
-                
-                
-                
             }
         });
     }
