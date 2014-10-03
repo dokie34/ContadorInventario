@@ -17,6 +17,11 @@ import javax.swing.RowFilter.Entry;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import au.com.bytecode.opencsv.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -333,6 +338,34 @@ public class Contador extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        CSVWriter writer;
+        String auxLlaves,auxValores;
+        Enumeration<String> llaves =tabla.keys();
+        Enumeration<String> valores = tabla.elements();
+        try {
+            writer = new CSVWriter(new FileWriter("yourfile.xls"), '\t');
+            String[] encabezados="Codigo#Descripcion#Precio Costo#Precio Venta#Precio Mayoreo#Existencia#Inv. Minimo#Departamento".split("#");
+            writer.writeNext(encabezados);
+
+            while (llaves.hasMoreElements()) {
+                auxLlaves = llaves.nextElement();
+                auxValores = valores.nextElement();
+                String CadAux=auxLlaves+"# # # # #"+auxValores+"# #";
+                String[] entries = CadAux.split("#");
+                writer.writeNext(entries);
+                
+//            for (int i = 0; i < 10; i++) {
+//                // feed in your array (or convert your data to an array)
+//                String[] entries = "first#second#third".split("#");
+//                writer.writeNext(entries);  
+//            }
+            }
+            writer.close(); 
+            
+        } catch (IOException ex) {
+            Logger.getLogger(Contador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
