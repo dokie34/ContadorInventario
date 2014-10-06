@@ -19,10 +19,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import au.com.bytecode.opencsv.*;
 import static com.sun.org.apache.xalan.internal.xsltc.compiler.sym.EOF;
-import de.javasoft.plaf.synthetica.SyntheticaBlackEyeLookAndFeel;
-import de.javasoft.plaf.synthetica.SyntheticaBlueIceLookAndFeel;
-import de.javasoft.plaf.synthetica.SyntheticaLookAndFeel;
-import de.javasoft.plaf.synthetica.SyntheticaSilverMoonLookAndFeel;
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
@@ -39,6 +35,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.table.TableColumn;
 
 /**
  *
@@ -48,8 +45,8 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 public class Contador extends javax.swing.JFrame {
     
-    public Scanner entrada = new Scanner(System.in);
-    public static Hashtable<String,String> tabla=new Hashtable<String,String>();
+    //public Scanner entrada = new Scanner(System.in);
+    Hashtable tabla = new Hashtable();
     
     String codigo,cont;
     int valor;
@@ -63,6 +60,13 @@ public class Contador extends javax.swing.JFrame {
         this.getContentPane().setBackground(Color.DARK_GRAY);
         jPanel1.setBackground(Color.DARK_GRAY);
         jLabel1.setForeground(Color.WHITE);
+        
+        TableColumn cantCol = jTable1.getColumn("Cantidad");
+        cantCol.setMaxWidth(85);
+        cantCol.setWidth(85);
+        cantCol.setPreferredWidth(75);
+        jTable1.setMaximumSize(jTable1.getSize());
+        
 
         
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -83,11 +87,11 @@ public class Contador extends javax.swing.JFrame {
     }         
     
     public void imprimir(){
-        String auxLlaves,auxValores;
+            String auxLlaves,auxValores;
             int i=0;
             
             Enumeration<String> llaves =tabla.keys();
-            Enumeration<String> valores = tabla.elements();
+            Enumeration valores = tabla.elements();
             
             DefaultTableModel modelo= new DefaultTableModel();
             modelo = (DefaultTableModel) jTable1.getModel();
@@ -98,17 +102,20 @@ public class Contador extends javax.swing.JFrame {
             System.out.println("\n");
             while (llaves.hasMoreElements()) {
                     auxLlaves = llaves.nextElement();
-                    auxValores = valores.nextElement();
-                    System.out.println("Llave: "+ auxLlaves + "  Valor: " + auxValores );
+                    String auxExistencia = ((Articulo)tabla.get(auxLlaves)).existencia;
+                    String auxDescripcion = ((Articulo)tabla.get(auxLlaves)).descripcion;
+                    
+                    System.out.println("Llave: "+ auxLlaves + "  Valor: " + auxExistencia);
 
                     modelo.addRow(new Object[]{"",""});
                     
                     modelo.setValueAt(auxLlaves, i, 0);
-                    modelo.setValueAt(auxValores, i, 1);
+                    modelo.setValueAt(auxDescripcion, i, 1);
+                    modelo.setValueAt(auxExistencia, i, 2);
 
                     i++;
             }
-            
+        
     }
     
 
@@ -137,13 +144,13 @@ public class Contador extends javax.swing.JFrame {
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
+        jMenuItem6 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
 
         jMenuItem2.setText("jMenuItem2");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Contador de artículos");
-        setPreferredSize(null);
         setResizable(false);
         addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -232,11 +239,11 @@ public class Contador extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Código", "Cantidad"
+                "Código", "Descripción", "Cantidad"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false
+                false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -251,13 +258,13 @@ public class Contador extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 583, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 345, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -289,7 +296,15 @@ public class Contador extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("Exportar");
+        jMenu2.setText("Excel");
+
+        jMenuItem6.setText("Importar de Excel");
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem6ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem6);
 
         jMenuItem5.setText("Exportar a Excel");
         jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
@@ -313,22 +328,21 @@ public class Contador extends javax.swing.JFrame {
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 21, Short.MAX_VALUE)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(43, 43, 43))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -348,37 +362,40 @@ public class Contador extends javax.swing.JFrame {
         
         if(evt.getKeyCode() == KeyEvent.VK_ENTER){ 
             
-            String codigo,cont;
+            String codigo,cont = "0";
             int valor;
             
             codigo = jTextField1.getText();
             
             if (jTextField1.getText().isEmpty()!=true) {
                 if (tabla.get(codigo)!=null){
-                    valor=Integer.parseInt(tabla.get(codigo));
+                    Articulo prod = (Articulo)tabla.get(codigo);
+                    valor=Integer.parseInt(prod.existencia);
                     valor++;
                     cont=String.valueOf(valor);
-                    tabla.put(codigo, cont);
+                    prod.existencia=cont;
+                    tabla.put(codigo, prod);
                     jLabel1.setText("");
                     jLabel2.setText("");
                     jTextField1.setText("");
                     jTextField2.setText("");
-                    jLabel1.setText("<html>ARTÍCULO AGREGADO <br><br>Código:"+codigo+" \t Cantidad:"+cont+"</html");
+                    jLabel1.setText("<html>ARTÍCULO AGREGADO <br><br>Código:"+codigo+" \t Cantidad:"+cont+"</html>");
                 } else {
-                    cont=String.valueOf("1");
-                    tabla.put(codigo, cont);
+                    //cont=String.valueOf("1");
+                    //Producto prod=new Producto(codigo, cont, cont, cont, cont, cont, cont, cont);
+                    //tabla.put(codigo, prod);
                     jLabel1.setText("");
                     jLabel2.setText("");
                     jTextField1.setText("");
                     jTextField2.setText("");
-                    jLabel1.setText("<html>ARTÍCULO AGREGADO <br><br>Código:"+codigo+" \t Cantidad:"+cont+"</html");
+                    jLabel1.setText("<html>ERROR <br>Código no registrado</html>");
                 }
                 
             imprimir();
             
             }else{
                 jLabel2.setText("");
-                jLabel1.setText("<html>ERROR <br> Código no registrado</html");
+                jLabel1.setText("<html>ERROR <br> Código no registrado</html>");
             }
         }
     }//GEN-LAST:event_jTextField1KeyPressed
@@ -395,23 +412,27 @@ public class Contador extends javax.swing.JFrame {
                 
                 if (jTextField2.getText().isEmpty()!=true) {
                     if (tabla.get(codigo)!=null ){
-                    valor=Integer.parseInt(tabla.get(codigo));
+                    //valor=Integer.parseInt(tabla.get(codigo));
+                        Articulo prod = (Articulo)tabla.get(codigo);
+                        valor=Integer.parseInt(prod.existencia);
+                        //valor=0;
                         if (valor>0){
                             valor--;
                             cont=String.valueOf(valor);
-                            tabla.put(codigo, cont);
+                            prod.existencia=cont;
+                            tabla.put(codigo, prod);
                             jLabel1.setText("");
                             jLabel2.setText("");
                             jTextField1.setText("");
                             jTextField2.setText("");
-                            jLabel2.setText("<html>ARTÍCULO ELIMINADO <br><br>Código:"+codigo+" \t Cantidad:"+cont+"</html");
+                            jLabel2.setText("<html>ARTÍCULO ELIMINADO <br><br>Código:"+codigo+" \t Cantidad:"+cont+"</html>");
                         }else{
-                            tabla.remove(codigo);
+                            //tabla.remove(codigo);
                             jLabel1.setText("");
                             jLabel2.setText("");
                             jTextField1.setText("");
                             jTextField2.setText("");
-                            jLabel2.setText("El artículo solicitado no existe");
+                            jLabel2.setText("<html>Hay 0 existencias de <br>este artículo</html>");
                         }
                     } else {
                     jLabel1.setText("");
@@ -425,7 +446,7 @@ public class Contador extends javax.swing.JFrame {
                 
                 }else{
                     jLabel1.setText("");
-                    jLabel2.setText("<html>ERROR <br> Código no registrado</html");
+                    jLabel2.setText("<html>ERROR <br> Código no registrado</html>");
                 }
             }
     }//GEN-LAST:event_jTextField2KeyPressed
@@ -437,10 +458,12 @@ public class Contador extends javax.swing.JFrame {
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
         // TODO add your handling code here:
+        
+        /////////// exportar a excel
         CSVWriter writer;
-        String auxLlaves,auxValores;
+        String auxLlaves;
         Enumeration<String> llaves =tabla.keys();
-        Enumeration<String> valores = tabla.elements();
+        Enumeration valores = tabla.elements();
         
         JFileChooser file=new JFileChooser();
         file.showSaveDialog(this);
@@ -455,8 +478,8 @@ public class Contador extends javax.swing.JFrame {
 
                 while (llaves.hasMoreElements()) {
                     auxLlaves = llaves.nextElement();
-                    auxValores = valores.nextElement();
-                    String CadAux=auxLlaves+"# # # # #"+auxValores+"# #";
+                    Articulo prod = (Articulo)tabla.get(auxLlaves);
+                    String CadAux=auxLlaves+"#"+prod.descripcion+"#"+prod.costo+"#"+prod.venta+"#"+prod.mayoreo+"#"+prod.existencia+"#"+prod.minimo+"#"+prod.departamento;
                     String[] entries = CadAux.split("#");
                     writer.writeNext(entries);
                 }
@@ -477,7 +500,7 @@ public class Contador extends javax.swing.JFrame {
         CSVWriter writer;
         String auxLlaves,auxValores;
         Enumeration<String> llaves =tabla.keys();
-        Enumeration<String> valores = tabla.elements();
+        Enumeration valores = tabla.elements();
         
         JFileChooser file=new JFileChooser();
         file.showSaveDialog(this);
@@ -492,14 +515,16 @@ public class Contador extends javax.swing.JFrame {
 
                 while (llaves.hasMoreElements()) {
                     auxLlaves = llaves.nextElement();
-                    auxValores = valores.nextElement();
-                    String CadAux=auxLlaves+"#"+auxValores;
+                    //auxValores = valores.nextElement();
+                    Articulo prod = (Articulo)tabla.get(auxLlaves);
+                    String CadAux=auxLlaves+"#"+prod.descripcion+"#"+prod.costo+"#"+prod.venta+"#"+prod.mayoreo+"#"+prod.existencia+"#"+prod.minimo+"#"+prod.departamento;
+                    //String CadAux=auxLlaves+"#"+auxValores;
                     String[] entries = CadAux.split("#");
                     writer.writeNext(entries);
                 }
                 writer.close(); 
 
-                JOptionPane.showMessageDialog(rootPane, "Lista guardad", "Hecho" , WIDTH);
+                JOptionPane.showMessageDialog(rootPane, "Lista guardada", "Hecho" , WIDTH);
 
             } catch (IOException ex) {
                 Logger.getLogger(Contador.class.getName()).log(Level.SEVERE, null, ex);
@@ -514,19 +539,23 @@ public class Contador extends javax.swing.JFrame {
         String auxLlaves,auxValores;
         String[] linea;
         Enumeration<String> llaves =tabla.keys();
-        Enumeration<String> valores = tabla.elements();
-        
+        Enumeration valores = tabla.elements();
+
         JFileChooser file=new JFileChooser();
         file.showSaveDialog(this);
         File archivo =file.getSelectedFile();
-        
+
         if (archivo!=null){
             try {
 
                 reader = new CSVReader(new FileReader(archivo), '\t');
-
+                linea=reader.readNext();
                 while ((linea=reader.readNext())!=null) {
-                        tabla.put(linea[0], linea[1]);
+                    //tabla.put(linea[0], linea[1]);
+                    Articulo prod= new Articulo(linea[0], linea[1], linea[2], linea[3], linea[4], linea[5], linea[6], linea[7]);
+                    tabla.put(linea[0],prod);
+
+                    //System.out.println(linea[0]);
                 }
                 imprimir();
 
@@ -536,6 +565,39 @@ public class Contador extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+        // TODO add your handling code here:
+        CSVReader reader;
+        String auxLlaves,auxValores;
+        String[] linea;
+        Enumeration<String> llaves =tabla.keys();
+        Enumeration valores = tabla.elements();
+
+        JFileChooser file=new JFileChooser();
+        file.showSaveDialog(this);
+        File archivo =file.getSelectedFile();
+
+        if (archivo!=null){
+            try {
+
+                reader = new CSVReader(new FileReader(archivo), '\t');
+                linea=reader.readNext();
+                while ((linea=reader.readNext())!=null) {
+                    //tabla.put(linea[0], linea[1]);
+                    Articulo prod= new Articulo(linea[0], linea[1], linea[2], linea[3], linea[4], "0", linea[6], linea[7]);
+                    tabla.put(linea[0],prod);
+
+                    //System.out.println(linea[0]);
+                }
+                imprimir();
+
+            } catch (IOException ex) {
+                Logger.getLogger(Contador.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(rootPane, "No se pudo abrir tu archivo, inténtalo otra vez" , "Advertencia", WIDTH);
+            }
+        }
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -588,6 +650,7 @@ public class Contador extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
+    private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
