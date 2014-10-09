@@ -695,54 +695,6 @@ public class Contador extends javax.swing.JFrame {
 
     private void BotonExportarExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonExportarExcelActionPerformed
         // TODO add your handling code here:
-        Articulo prod= new Articulo("111111111111111","Nadie sabe","300","350","350","33","1","Linea Blanca");
-        Articulo prod1= new Articulo("222222222222222","Quien sabe","300","350","350","33","1","Linea Blanca");
-        Articulo prod2= new Articulo("333333333333333","Algo mas","200","300","300","27","1","Celulares");
-        Articulo prod3= new Articulo("444444444444444","Algo","200","300","300","27","1","Celulares");
-        Articulo prod4= new Articulo("555555555555555","Caja dos mil","100","200","200","56","1","Accesorios");
-        Articulo prod5= new Articulo("666666666666666","Caja 2","100","200","200","56","1","Accesorios");
-        Articulo prod6= new Articulo("777777777777777","Caja mil","100","200","200","34","1","Accesorios");
-        Articulo prod7= new Articulo("888888888888888","Caja","100","200","200","44","1","Accesorios");
-        Articulo prod8= new Articulo("999999999999999","Otra cosa","300","350","350","89","1","Linea Blanca");
-        Articulo prod9= new Articulo("101010101010101","Prueba 1534253245145","300","350","350","1","1","Linea Blanca");
-        Articulo prod10= new Articulo("11011011010011","Prueba 2213412341234123","300","350","350","54","1","Linea Blanca");
-        Articulo prod11= new Articulo("121212121212121","Prueba 21342134213421343","300","350","350","11","1","Linea Blanca");
-        Articulo prod12= new Articulo("131313131313131","Prueba 3245436756745634254","300","350","350","20","1","Linea Blanca");
-        Articulo prod13= new Articulo("141414141414141","Prueba 658678978546235354456865","300","350","350","10","1","Linea Blanca");
-        Articulo prod14= new Articulo("151515151515151","Contenedor de algo que sirve para guardar otra cosa","300","350","350","7","1","Linea Blanca");
-        Articulo prod15= new Articulo("161616161616161","Caja mil ocho mil","300","350","350","5","1","Linea Blanca");
-        Articulo prod16= new Articulo("171717171717171","Esto es una descripción de producto","300","350","350","3","1","Linea Blanca");
-        Articulo prod17= new Articulo("181818181818181","Esto es algo que no sé lo que es","300","350","350","23","1","Linea Blanca");
-        Articulo prod18= new Articulo("191919191919191","Descripción del un artículo de esta lista","300","350","350","8","1","Linea Blanca");
-        Articulo prod19= new Articulo("202020202020202","$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$","300","350","350","8","1","Linea Blanca");
-        Articulo prod20= new Articulo("212121212121212","%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%","300","350","350","9","1","Linea Blanca");
-        
-        
-        
-        
-        tabla.put("111111111111111",prod);
-        tabla.put("222222222222222",prod1);
-        tabla.put("333333333333333",prod2);
-        tabla.put("444444444444444",prod3);
-        tabla.put("555555555555555",prod4);
-        tabla.put("666666666666666",prod5);
-        tabla.put("777777777777777",prod6);
-        tabla.put("888888888888888",prod7);
-        tabla.put("999999999999999",prod8);
-        tabla.put("101010101010101",prod9);
-        tabla.put("11011011010011",prod10);
-        tabla.put("121212121212121",prod11);
-        tabla.put("131313131313131",prod12);
-        tabla.put("141414141414141",prod13);
-        tabla.put("151515151515151",prod14);
-        tabla.put("161616161616161",prod15);
-        tabla.put("171717171717171",prod16);
-        tabla.put("181818181818181",prod17);
-        tabla.put("191919191919191",prod18);
-        tabla.put("202020202020202",prod19);
-        tabla.put("212121212121212",prod20);
-        
-        
         ExportarExcel();
     }//GEN-LAST:event_BotonExportarExcelActionPerformed
 
