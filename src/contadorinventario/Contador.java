@@ -20,6 +20,7 @@ import javax.swing.table.TableModel;
 import au.com.bytecode.opencsv.*;
 import static com.sun.org.apache.xalan.internal.xsltc.compiler.sym.EOF;
 import java.awt.Color;
+import java.awt.Font;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,6 +32,7 @@ import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -59,7 +61,10 @@ public class Contador extends javax.swing.JFrame {
         
         this.getContentPane().setBackground(Color.DARK_GRAY);
         jPanel1.setBackground(Color.DARK_GRAY);
-        jLabel1.setForeground(Color.WHITE);
+        jPanel3.setBackground(Color.DARK_GRAY);
+        jPanel2.setBackground(Color.DARK_GRAY);
+        EtiquetaMostrar.setForeground(Color.WHITE);
+        
         
         TableColumn cantCol = jTable1.getColumn("Cantidad");
         cantCol.setMaxWidth(85);
@@ -86,7 +91,7 @@ public class Contador extends javax.swing.JFrame {
             System.exit(0);
     }         
     
-    public void imprimir(){
+    private void imprimir(){
             String auxLlaves,auxValores;
             int i=0;
             
@@ -97,7 +102,6 @@ public class Contador extends javax.swing.JFrame {
             modelo = (DefaultTableModel) jTable1.getModel();
             
             while(modelo.getRowCount()>0)modelo.removeRow(0);
-            
             
             System.out.println("\n");
             while (llaves.hasMoreElements()) {
@@ -114,8 +118,138 @@ public class Contador extends javax.swing.JFrame {
                     modelo.setValueAt(auxExistencia, i, 2);
 
                     i++;
+            } 
+    }
+    
+    private void AgregarArticulo(){
+            String codigo,cont = "0";
+            int valor;
+            
+            codigo = InsertarCodigo.getText();
+            
+            if (InsertarCodigo.getText().isEmpty()!=true) {
+                if (tabla.get(codigo)!=null){
+                    Articulo prod = (Articulo)tabla.get(codigo);
+                    valor=Integer.parseInt(prod.existencia);
+                    valor++;
+                    cont=String.valueOf(valor);
+                    prod.existencia=cont;
+                    tabla.put(codigo, prod);
+                    EtiquetaMostrar.setText("");
+                    InsertarCodigo.setText("");
+                    EtiquetaMostrar.setText("<html>ARTÍCULO AGREGADO <br><br>Código:"+codigo+" \t Cantidad:"+cont+"</html>");
+                } else {
+                    EtiquetaMostrar.setText("");
+                    InsertarCodigo.setText("");
+                    EtiquetaMostrar.setText("<html>ERROR <br>Código no registrado</html>");
+                }
+                
+            imprimir();
+            
+            }else{
+                EtiquetaMostrar.setText("<html>ERROR <br> Código no introducido</html>");
             }
+    }
+    
+    private void EliminarArticulo(){
+        String codigo,cont;
+                int valor;
+                
+                codigo = InsertarCodigo.getText();
+                
+                if (InsertarCodigo.getText().isEmpty()!=true) {
+                    if (tabla.get(codigo)!=null ){
+                        Articulo prod = (Articulo)tabla.get(codigo);
+                        valor=Integer.parseInt(prod.existencia);
+                        if (valor>0){
+                            valor--;
+                            cont=String.valueOf(valor);
+                            prod.existencia=cont;
+                            tabla.put(codigo, prod);
+                            EtiquetaMostrar.setText("");
+                            InsertarCodigo.setText("");
+                            EtiquetaMostrar.setText("<html>ARTÍCULO ELIMINADO <br><br>Código:"+codigo+" \t Cantidad:"+cont+"</html>");
+                        }else{
+                            EtiquetaMostrar.setText("");
+                            InsertarCodigo.setText("");
+                            EtiquetaMostrar.setText("<html>Hay 0 existencias de <br>este artículo</html>");
+                        }
+                    } else {
+                    EtiquetaMostrar.setText("");
+                    InsertarCodigo.setText("");
+                    EtiquetaMostrar.setText("El artículo solicitado no existe");
+                    }
+
+                    imprimir();
+                
+                }else{
+                    EtiquetaMostrar.setText("");
+                    EtiquetaMostrar.setText("<html>ERROR <br> Código no introducido</html>");
+                }
+    }
+    
+    private void ImportarExcel(){
+        CSVReader reader;
+        String auxLlaves,auxValores;
+        String[] linea;
+        Enumeration<String> llaves =tabla.keys();
+        Enumeration valores = tabla.elements();
+
+        JFileChooser file=new JFileChooser();
+        file.showSaveDialog(this);
+        File archivo =file.getSelectedFile();
+
+        if (archivo!=null){
+            try {
+
+                reader = new CSVReader(new FileReader(archivo), '\t');
+                linea=reader.readNext();
+                while ((linea=reader.readNext())!=null) {
+                    Articulo prod= new Articulo(linea[0], linea[1], linea[2], linea[3], linea[4], linea[5], linea[6], linea[7]);
+                    tabla.put(linea[0],prod);
+                }
+                imprimir();
+
+            } catch (IOException ex) {
+                Logger.getLogger(Contador.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(rootPane, "No se pudo abrir tu archivo, inténtalo otra vez" , "Advertencia", WIDTH);
+            }
+        }
+    }
+    
+    
+    private void ExportarExcel(){
+        CSVWriter writer;
+        String auxLlaves;
+        Enumeration<String> llaves =tabla.keys();
+        Enumeration valores = tabla.elements();
         
+        JFileChooser file=new JFileChooser();
+        file.showSaveDialog(this);
+        File archivo =file.getSelectedFile();
+        
+        if (archivo!=null){
+            try {
+                writer = new CSVWriter(new FileWriter(archivo+".xls"), '\t');
+                String[] encabezados="Codigo#Descripcion#Precio Costo#Precio Venta#Precio Mayoreo#Existencia#Inv. Minimo#Departamento".split("#");
+                writer.writeNext(encabezados);
+
+                while (llaves.hasMoreElements()) {
+                    auxLlaves = llaves.nextElement();
+                    Articulo prod = (Articulo)tabla.get(auxLlaves);
+                    String CadAux=auxLlaves+"#"+prod.descripcion+"#"+prod.costo+"#"+prod.venta+"#"+prod.mayoreo+"#"+prod.existencia+"#"+prod.minimo+"#"+prod.departamento;
+                    String[] entries = CadAux.split("#");
+                    writer.writeNext(entries);
+                }
+                writer.close(); 
+
+                JOptionPane.showMessageDialog(rootPane, "Lista exportada", "Hecho" , WIDTH);
+
+            } catch (IOException ex) {
+                Logger.getLogger(Contador.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(rootPane, "No se pudo guardar tu archivo, inténtalo otra vez" , "Advertencia", WIDTH);
+            }
+        }
     }
     
 
@@ -130,27 +264,31 @@ public class Contador extends javax.swing.JFrame {
 
         jMenuItem2 = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
-        jTextField1 = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
-        jTextField2 = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
+        InsertarCodigo = new javax.swing.JTextField();
+        EtiquetaMostrar = new javax.swing.JLabel();
+        BotonAgregar = new javax.swing.JToggleButton();
+        BotonEliminar = new javax.swing.JToggleButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jPanel2 = new javax.swing.JPanel();
+        BotonImportarExcel = new javax.swing.JButton();
+        BotonExportarExcel = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        MenuAbrirLista = new javax.swing.JMenuItem();
+        MenuaGuardarLista = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
-        jMenuItem6 = new javax.swing.JMenuItem();
-        jMenuItem5 = new javax.swing.JMenuItem();
+        MenuImportarExcel = new javax.swing.JMenuItem();
+        MenuExportarExcel = new javax.swing.JMenuItem();
 
         jMenuItem2.setText("jMenuItem2");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Contador de artículos");
+        setUndecorated(true);
         setResizable(false);
         addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -158,80 +296,73 @@ public class Contador extends javax.swing.JFrame {
             }
         });
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Agregar artículos", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.ABOVE_TOP, new java.awt.Font("SansSerif", 1, 18), java.awt.Color.white)); // NOI18N
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Artículos", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.ABOVE_TOP, new java.awt.Font("SansSerif", 1, 18), java.awt.Color.white)); // NOI18N
         jPanel1.setToolTipText("");
         jPanel1.setName(""); // NOI18N
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        InsertarCodigo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                InsertarCodigoActionPerformed(evt);
             }
         });
-        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+        InsertarCodigo.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
-                jTextField1KeyPressed(evt);
+                InsertarCodigoKeyPressed(evt);
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        EtiquetaMostrar.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        EtiquetaMostrar.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        EtiquetaMostrar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        BotonAgregar.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        BotonAgregar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Tick.png"))); // NOI18N
+        BotonAgregar.setText("Agregar");
+        BotonAgregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BotonAgregarActionPerformed(evt);
+            }
+        });
+
+        BotonEliminar.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        BotonEliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Cross.png"))); // NOI18N
+        BotonEliminar.setText("Eliminar");
+        BotonEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BotonEliminarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(EtiquetaMostrar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(InsertarCodigo, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(BotonAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                        .addComponent(BotonEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(86, 86, 86))
-        );
-
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Eliminar Artículos", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Century Schoolbook L", 1, 12))); // NOI18N
-
-        jTextField2.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                jTextField2KeyPressed(evt);
-            }
-        });
-
-        jLabel2.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField2)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+                .addContainerGap(26, Short.MAX_VALUE)
+                .addComponent(InsertarCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(EtiquetaMostrar, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(BotonAgregar)
+                    .addComponent(BotonEliminar))
                 .addContainerGap())
         );
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Lista", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Century Schoolbook L", 1, 12))); // NOI18N
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Lista de Artículos", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("SansSerif", 1, 18), java.awt.Color.white)); // NOI18N
 
         jTable1.setAutoCreateRowSorter(true);
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -258,19 +389,80 @@ public class Contador extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 583, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
                 .addContainerGap())
+        );
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+
+        BotonImportarExcel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Excel2.png"))); // NOI18N
+        BotonImportarExcel.setText("Importar de Excel");
+        BotonImportarExcel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BotonImportarExcelActionPerformed(evt);
+            }
+        });
+
+        BotonExportarExcel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Excel.png"))); // NOI18N
+        BotonExportarExcel.setText("Exportar a Excel");
+        BotonExportarExcel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BotonExportarExcelActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(BotonImportarExcel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(BotonExportarExcel)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(BotonImportarExcel, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BotonExportarExcel, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(59, Short.MAX_VALUE))
         );
 
         jMenu1.setText("Archivo");
 
-        jMenuItem1.setText("Abrir lista (txt)");
+        MenuAbrirLista.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        MenuAbrirLista.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Open.png"))); // NOI18N
+        MenuAbrirLista.setText("Abrir lista (txt)");
+        MenuAbrirLista.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuAbrirListaActionPerformed(evt);
+            }
+        });
+        jMenu1.add(MenuAbrirLista);
+
+        MenuaGuardarLista.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        MenuaGuardarLista.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Save.png"))); // NOI18N
+        MenuaGuardarLista.setText("Guardar lista (txt)");
+        MenuaGuardarLista.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuaGuardarListaActionPerformed(evt);
+            }
+        });
+        jMenu1.add(MenuaGuardarLista);
+
+        jMenuItem1.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jMenuItem1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Minimize.png"))); // NOI18N
+        jMenuItem1.setText("Minimizar");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem1ActionPerformed(evt);
@@ -278,14 +470,8 @@ public class Contador extends javax.swing.JFrame {
         });
         jMenu1.add(jMenuItem1);
 
-        jMenuItem3.setText("Guardar lista (txt)");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem3ActionPerformed(evt);
-            }
-        });
-        jMenu1.add(jMenuItem3);
-
+        jMenuItem4.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jMenuItem4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Close.png"))); // NOI18N
         jMenuItem4.setText("Salir");
         jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -298,21 +484,25 @@ public class Contador extends javax.swing.JFrame {
 
         jMenu2.setText("Excel");
 
-        jMenuItem6.setText("Importar de Excel");
-        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+        MenuImportarExcel.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        MenuImportarExcel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/ImportExcel.png"))); // NOI18N
+        MenuImportarExcel.setText("Importar de Excel");
+        MenuImportarExcel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem6ActionPerformed(evt);
+                MenuImportarExcelActionPerformed(evt);
             }
         });
-        jMenu2.add(jMenuItem6);
+        jMenu2.add(MenuImportarExcel);
 
-        jMenuItem5.setText("Exportar a Excel");
-        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+        MenuExportarExcel.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        MenuExportarExcel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/ExportExcel.png"))); // NOI18N
+        MenuExportarExcel.setText("Exportar a Excel");
+        MenuExportarExcel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem5ActionPerformed(evt);
+                MenuExportarExcelActionPerformed(evt);
             }
         });
-        jMenu2.add(jMenuItem5);
+        jMenu2.add(MenuExportarExcel);
 
         jMenuBar1.add(jMenu2);
 
@@ -324,9 +514,9 @@ public class Contador extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -337,164 +527,54 @@ public class Contador extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void InsertarCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InsertarCodigoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_InsertarCodigoActionPerformed
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
         // TODO add your handling code here:
     }//GEN-LAST:event_formKeyPressed
 
-    private void jTextField1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyPressed
+    private void InsertarCodigoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_InsertarCodigoKeyPressed
         // TODO add your handling code here:
         
         if(evt.getKeyCode() == KeyEvent.VK_ENTER){ 
-            
-            String codigo,cont = "0";
-            int valor;
-            
-            codigo = jTextField1.getText();
-            
-            if (jTextField1.getText().isEmpty()!=true) {
-                if (tabla.get(codigo)!=null){
-                    Articulo prod = (Articulo)tabla.get(codigo);
-                    valor=Integer.parseInt(prod.existencia);
-                    valor++;
-                    cont=String.valueOf(valor);
-                    prod.existencia=cont;
-                    tabla.put(codigo, prod);
-                    jLabel1.setText("");
-                    jLabel2.setText("");
-                    jTextField1.setText("");
-                    jTextField2.setText("");
-                    jLabel1.setText("<html>ARTÍCULO AGREGADO <br><br>Código:"+codigo+" \t Cantidad:"+cont+"</html>");
-                } else {
-                    //cont=String.valueOf("1");
-                    //Producto prod=new Producto(codigo, cont, cont, cont, cont, cont, cont, cont);
-                    //tabla.put(codigo, prod);
-                    jLabel1.setText("");
-                    jLabel2.setText("");
-                    jTextField1.setText("");
-                    jTextField2.setText("");
-                    jLabel1.setText("<html>ERROR <br>Código no registrado</html>");
+            if (BotonAgregar.isSelected()) {
+                    AgregarArticulo();
                 }
-                
-            imprimir();
-            
-            }else{
-                jLabel2.setText("");
-                jLabel1.setText("<html>ERROR <br> Código no registrado</html>");
+            else if(BotonEliminar.isSelected()){
+                    EliminarArticulo();
+                }
+            else{
+                JOptionPane.showMessageDialog(rootPane, "¡¡¡Selecciona una opción!!!", "" , WIDTH);
             }
+            
         }
-    }//GEN-LAST:event_jTextField1KeyPressed
-
-    private void jTextField2KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField2KeyPressed
-        // TODO add your handling code here:
-            
-            if(evt.getKeyCode() == KeyEvent.VK_ENTER){ 
-                
-                String codigo,cont;
-                int valor;
-                
-                codigo = jTextField2.getText();
-                
-                if (jTextField2.getText().isEmpty()!=true) {
-                    if (tabla.get(codigo)!=null ){
-                    //valor=Integer.parseInt(tabla.get(codigo));
-                        Articulo prod = (Articulo)tabla.get(codigo);
-                        valor=Integer.parseInt(prod.existencia);
-                        //valor=0;
-                        if (valor>0){
-                            valor--;
-                            cont=String.valueOf(valor);
-                            prod.existencia=cont;
-                            tabla.put(codigo, prod);
-                            jLabel1.setText("");
-                            jLabel2.setText("");
-                            jTextField1.setText("");
-                            jTextField2.setText("");
-                            jLabel2.setText("<html>ARTÍCULO ELIMINADO <br><br>Código:"+codigo+" \t Cantidad:"+cont+"</html>");
-                        }else{
-                            //tabla.remove(codigo);
-                            jLabel1.setText("");
-                            jLabel2.setText("");
-                            jTextField1.setText("");
-                            jTextField2.setText("");
-                            jLabel2.setText("<html>Hay 0 existencias de <br>este artículo</html>");
-                        }
-                    } else {
-                    jLabel1.setText("");
-                    jLabel2.setText("");
-                    jTextField1.setText("");
-                    jTextField2.setText("");
-                    jLabel2.setText("El artículo solicitado no existe");
-                    }
-
-                    imprimir();
-                
-                }else{
-                    jLabel1.setText("");
-                    jLabel2.setText("<html>ERROR <br> Código no registrado</html>");
-                }
-            }
-    }//GEN-LAST:event_jTextField2KeyPressed
+    }//GEN-LAST:event_InsertarCodigoKeyPressed
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
         // TODO add your handling code here:
         close();
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
-    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+    private void MenuExportarExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuExportarExcelActionPerformed
         // TODO add your handling code here:
-        
-        /////////// exportar a excel
-        CSVWriter writer;
-        String auxLlaves;
-        Enumeration<String> llaves =tabla.keys();
-        Enumeration valores = tabla.elements();
-        
-        JFileChooser file=new JFileChooser();
-        file.showSaveDialog(this);
-        File archivo =file.getSelectedFile();
-        
-        if (archivo!=null){
-            try {
+        ExportarExcel(); 
+    }//GEN-LAST:event_MenuExportarExcelActionPerformed
 
-                writer = new CSVWriter(new FileWriter(archivo+".xls"), '\t');
-                String[] encabezados="Codigo#Descripcion#Precio Costo#Precio Venta#Precio Mayoreo#Existencia#Inv. Minimo#Departamento".split("#");
-                writer.writeNext(encabezados);
-
-                while (llaves.hasMoreElements()) {
-                    auxLlaves = llaves.nextElement();
-                    Articulo prod = (Articulo)tabla.get(auxLlaves);
-                    String CadAux=auxLlaves+"#"+prod.descripcion+"#"+prod.costo+"#"+prod.venta+"#"+prod.mayoreo+"#"+prod.existencia+"#"+prod.minimo+"#"+prod.departamento;
-                    String[] entries = CadAux.split("#");
-                    writer.writeNext(entries);
-                }
-                writer.close(); 
-
-                JOptionPane.showMessageDialog(rootPane, "Lista exportada", "Hecho" , WIDTH);
-
-            } catch (IOException ex) {
-                Logger.getLogger(Contador.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(rootPane, "No se pudo guardar tu archivo, inténtalo otra vez" , "Advertencia", WIDTH);
-            }
-        }
-    }//GEN-LAST:event_jMenuItem5ActionPerformed
-
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+    private void MenuaGuardarListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuaGuardarListaActionPerformed
         // TODO add your handling code here:
         
         CSVWriter writer;
@@ -510,15 +590,11 @@ public class Contador extends javax.swing.JFrame {
             try {
 
                 writer = new CSVWriter(new FileWriter(archivo+".txt"), '\t');
-                //String[] encabezados="Codigo#Descripcion#Precio Costo#Precio Venta#Precio Mayoreo#Existencia#Inv. Minimo#Departamento".split("#");
-                //writer.writeNext(encabezados);
 
                 while (llaves.hasMoreElements()) {
                     auxLlaves = llaves.nextElement();
-                    //auxValores = valores.nextElement();
                     Articulo prod = (Articulo)tabla.get(auxLlaves);
                     String CadAux=auxLlaves+"#"+prod.descripcion+"#"+prod.costo+"#"+prod.venta+"#"+prod.mayoreo+"#"+prod.existencia+"#"+prod.minimo+"#"+prod.departamento;
-                    //String CadAux=auxLlaves+"#"+auxValores;
                     String[] entries = CadAux.split("#");
                     writer.writeNext(entries);
                 }
@@ -531,9 +607,9 @@ public class Contador extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(rootPane, "No se pudo guardar tu archivo, inténtalo otra vez" , "Advertencia", WIDTH);
             }
         }
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
+    }//GEN-LAST:event_MenuaGuardarListaActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void MenuAbrirListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuAbrirListaActionPerformed
         // TODO add your handling code here:
         CSVReader reader;
         String auxLlaves,auxValores;
@@ -549,13 +625,10 @@ public class Contador extends javax.swing.JFrame {
             try {
 
                 reader = new CSVReader(new FileReader(archivo), '\t');
-                linea=reader.readNext();
                 while ((linea=reader.readNext())!=null) {
-                    //tabla.put(linea[0], linea[1]);
                     Articulo prod= new Articulo(linea[0], linea[1], linea[2], linea[3], linea[4], linea[5], linea[6], linea[7]);
                     tabla.put(linea[0],prod);
 
-                    //System.out.println(linea[0]);
                 }
                 imprimir();
 
@@ -564,40 +637,55 @@ public class Contador extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(rootPane, "No se pudo abrir tu archivo, inténtalo otra vez" , "Advertencia", WIDTH);
             }
         }
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_MenuAbrirListaActionPerformed
 
-    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+    private void MenuImportarExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuImportarExcelActionPerformed
         // TODO add your handling code here:
-        CSVReader reader;
-        String auxLlaves,auxValores;
-        String[] linea;
-        Enumeration<String> llaves =tabla.keys();
-        Enumeration valores = tabla.elements();
+        ImportarExcel();
+    }//GEN-LAST:event_MenuImportarExcelActionPerformed
 
-        JFileChooser file=new JFileChooser();
-        file.showSaveDialog(this);
-        File archivo =file.getSelectedFile();
-
-        if (archivo!=null){
-            try {
-
-                reader = new CSVReader(new FileReader(archivo), '\t');
-                linea=reader.readNext();
-                while ((linea=reader.readNext())!=null) {
-                    //tabla.put(linea[0], linea[1]);
-                    Articulo prod= new Articulo(linea[0], linea[1], linea[2], linea[3], linea[4], "0", linea[6], linea[7]);
-                    tabla.put(linea[0],prod);
-
-                    //System.out.println(linea[0]);
-                }
-                imprimir();
-
-            } catch (IOException ex) {
-                Logger.getLogger(Contador.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(rootPane, "No se pudo abrir tu archivo, inténtalo otra vez" , "Advertencia", WIDTH);
-            }
+    private void BotonAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonAgregarActionPerformed
+        // TODO add your handling code here:
+        if (BotonAgregar.isSelected()){
+            BotonEliminar.setSelected(false);
+            //BotonAgregar.setForeground(Color.red);
+            BotonAgregar.setFont(new Font("Dialog", 1, 22));
+            //BotonEliminar.setForeground(Color.black);
+            BotonEliminar.setFont(new Font("Dialog", 1, 16));
+        }else{
+            //BotonAgregar.setForeground(Color.black);
+            BotonAgregar.setFont(new Font("Dialog", 1, 16));
         }
-    }//GEN-LAST:event_jMenuItem6ActionPerformed
+    }//GEN-LAST:event_BotonAgregarActionPerformed
+
+    private void BotonEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonEliminarActionPerformed
+        // TODO add your handling code here:
+        if (BotonEliminar.isSelected()){
+            BotonAgregar.setSelected(false);
+            //BotonEliminar.setForeground(Color.red);
+            BotonEliminar.setFont(new Font("Dialog", 1, 22));
+            //BotonAgregar.setForeground(Color.black);
+            BotonAgregar.setFont(new Font("Dialog", 1, 16));
+        }else{
+            //BotonEliminar.setForeground(Color.black);
+            BotonEliminar.setFont(new Font("Dialog", 1, 16));
+        }
+    }//GEN-LAST:event_BotonEliminarActionPerformed
+
+    private void BotonImportarExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonImportarExcelActionPerformed
+        // TODO add your handling code here:
+        ImportarExcel();
+    }//GEN-LAST:event_BotonImportarExcelActionPerformed
+
+    private void BotonExportarExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonExportarExcelActionPerformed
+        // TODO add your handling code here:
+        ExportarExcel();
+    }//GEN-LAST:event_BotonExportarExcelActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
+        setExtendedState(JFrame.CROSSHAIR_CURSOR); 
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -640,24 +728,27 @@ public class Contador extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JToggleButton BotonAgregar;
+    private javax.swing.JToggleButton BotonEliminar;
+    private javax.swing.JButton BotonExportarExcel;
+    private javax.swing.JButton BotonImportarExcel;
+    private javax.swing.JLabel EtiquetaMostrar;
+    private javax.swing.JTextField InsertarCodigo;
+    private javax.swing.JMenuItem MenuAbrirLista;
+    private javax.swing.JMenuItem MenuExportarExcel;
+    private javax.swing.JMenuItem MenuImportarExcel;
+    private javax.swing.JMenuItem MenuaGuardarLista;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JMenuItem jMenuItem5;
-    private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     public static javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
 }
 
