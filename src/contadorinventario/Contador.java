@@ -34,6 +34,7 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -59,18 +60,20 @@ public class Contador extends javax.swing.JFrame {
     public Contador() {
         initComponents();
         
-        this.getContentPane().setBackground(Color.DARK_GRAY);
-        jPanel1.setBackground(Color.DARK_GRAY);
-        jPanel3.setBackground(Color.DARK_GRAY);
-        jPanel2.setBackground(Color.DARK_GRAY);
-        EtiquetaMostrar.setForeground(Color.WHITE);
+        BotonImportarExcel.setText("<html>Importar <br> de Excel</html>");
+        BotonExportarExcel.setText("<html>Exportar <br> a Excel</html>");
         
-        
+        ////////////////////// Tamaño de la tabla
         TableColumn cantCol = jTable1.getColumn("Cantidad");
         cantCol.setMaxWidth(85);
         cantCol.setWidth(85);
         cantCol.setPreferredWidth(75);
+        TableColumn codCol = jTable1.getColumn("Código");
+        codCol.setMaxWidth(185);
+        codCol.setWidth(185);
+        codCol.setPreferredWidth(175);
         jTable1.setMaximumSize(jTable1.getSize());
+        
         
 
         
@@ -137,7 +140,7 @@ public class Contador extends javax.swing.JFrame {
                     tabla.put(codigo, prod);
                     EtiquetaMostrar.setText("");
                     InsertarCodigo.setText("");
-                    EtiquetaMostrar.setText("<html>ARTÍCULO AGREGADO <br><br>Código:"+codigo+" \t Cantidad:"+cont+"</html>");
+                    EtiquetaMostrar.setText("<html>ARTÍCULO AGREGADO <br><br>Código:"+codigo+" <br> Cantidad:"+cont+"</html>");
                 } else {
                     EtiquetaMostrar.setText("");
                     InsertarCodigo.setText("");
@@ -168,7 +171,7 @@ public class Contador extends javax.swing.JFrame {
                             tabla.put(codigo, prod);
                             EtiquetaMostrar.setText("");
                             InsertarCodigo.setText("");
-                            EtiquetaMostrar.setText("<html>ARTÍCULO ELIMINADO <br><br>Código:"+codigo+" \t Cantidad:"+cont+"</html>");
+                            EtiquetaMostrar.setText("<html>ARTÍCULO ELIMINADO <br><br>Código:"+codigo+" <br> Cantidad:"+cont+"</html>");
                         }else{
                             EtiquetaMostrar.setText("");
                             InsertarCodigo.setText("");
@@ -296,7 +299,7 @@ public class Contador extends javax.swing.JFrame {
             }
         });
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Artículos", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.ABOVE_TOP, new java.awt.Font("SansSerif", 1, 18), java.awt.Color.white)); // NOI18N
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Artículos", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.ABOVE_TOP, new java.awt.Font("SansSerif", 1, 18), java.awt.Color.black)); // NOI18N
         jPanel1.setToolTipText("");
         jPanel1.setName(""); // NOI18N
 
@@ -311,7 +314,7 @@ public class Contador extends javax.swing.JFrame {
             }
         });
 
-        EtiquetaMostrar.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        EtiquetaMostrar.setFont(new java.awt.Font("Dialog", 1, 20)); // NOI18N
         EtiquetaMostrar.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         EtiquetaMostrar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -340,12 +343,12 @@ public class Contador extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(EtiquetaMostrar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(InsertarCodigo, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(BotonAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
-                        .addComponent(BotonEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(BotonEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(EtiquetaMostrar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -362,7 +365,7 @@ public class Contador extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Lista de Artículos", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("SansSerif", 1, 18), java.awt.Color.white)); // NOI18N
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Lista de Artículos", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("SansSerif", 1, 18), java.awt.Color.black)); // NOI18N
 
         jTable1.setAutoCreateRowSorter(true);
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -389,7 +392,7 @@ public class Contador extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 584, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -401,16 +404,18 @@ public class Contador extends javax.swing.JFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
+        BotonImportarExcel.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         BotonImportarExcel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Excel2.png"))); // NOI18N
-        BotonImportarExcel.setText("Importar de Excel");
+        BotonImportarExcel.setIconTextGap(20);
         BotonImportarExcel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BotonImportarExcelActionPerformed(evt);
             }
         });
 
+        BotonExportarExcel.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         BotonExportarExcel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Excel.png"))); // NOI18N
-        BotonExportarExcel.setText("Exportar a Excel");
+        BotonExportarExcel.setIconTextGap(20);
         BotonExportarExcel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BotonExportarExcelActionPerformed(evt);
@@ -423,19 +428,19 @@ public class Contador extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(BotonImportarExcel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(BotonExportarExcel)
+                .addComponent(BotonImportarExcel, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BotonExportarExcel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(32, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BotonImportarExcel, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(BotonExportarExcel, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(59, Short.MAX_VALUE))
+                .addGap(33, 33, 33))
         );
 
         jMenu1.setText("Archivo");
@@ -552,13 +557,24 @@ public class Contador extends javax.swing.JFrame {
         
         if(evt.getKeyCode() == KeyEvent.VK_ENTER){ 
             if (BotonAgregar.isSelected()) {
+                if (tabla.isEmpty()!=true){
                     AgregarArticulo();
+                }else{
+                    JOptionPane.showMessageDialog(rootPane,"No hay una lista importada","", WIDTH);
+                    InsertarCodigo.setText("");
                 }
+            }
             else if(BotonEliminar.isSelected()){
+                if (tabla.isEmpty()!=true){
                     EliminarArticulo();
+                }else{
+                    JOptionPane.showMessageDialog(rootPane,"No hay una lista importada","", WIDTH);
+                    InsertarCodigo.setText("");
                 }
+            }
             else{
                 JOptionPane.showMessageDialog(rootPane, "¡¡¡Selecciona una opción!!!", "" , WIDTH);
+                InsertarCodigo.setText("");
             }
             
         }
@@ -679,6 +695,54 @@ public class Contador extends javax.swing.JFrame {
 
     private void BotonExportarExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonExportarExcelActionPerformed
         // TODO add your handling code here:
+        Articulo prod= new Articulo("111111111111111","Nadie sabe","300","350","350","33","1","Linea Blanca");
+        Articulo prod1= new Articulo("222222222222222","Quien sabe","300","350","350","33","1","Linea Blanca");
+        Articulo prod2= new Articulo("333333333333333","Algo mas","200","300","300","27","1","Celulares");
+        Articulo prod3= new Articulo("444444444444444","Algo","200","300","300","27","1","Celulares");
+        Articulo prod4= new Articulo("555555555555555","Caja dos mil","100","200","200","56","1","Accesorios");
+        Articulo prod5= new Articulo("666666666666666","Caja 2","100","200","200","56","1","Accesorios");
+        Articulo prod6= new Articulo("777777777777777","Caja mil","100","200","200","34","1","Accesorios");
+        Articulo prod7= new Articulo("888888888888888","Caja","100","200","200","44","1","Accesorios");
+        Articulo prod8= new Articulo("999999999999999","Otra cosa","300","350","350","89","1","Linea Blanca");
+        Articulo prod9= new Articulo("101010101010101","Prueba 1534253245145","300","350","350","1","1","Linea Blanca");
+        Articulo prod10= new Articulo("11011011010011","Prueba 2213412341234123","300","350","350","54","1","Linea Blanca");
+        Articulo prod11= new Articulo("121212121212121","Prueba 21342134213421343","300","350","350","11","1","Linea Blanca");
+        Articulo prod12= new Articulo("131313131313131","Prueba 3245436756745634254","300","350","350","20","1","Linea Blanca");
+        Articulo prod13= new Articulo("141414141414141","Prueba 658678978546235354456865","300","350","350","10","1","Linea Blanca");
+        Articulo prod14= new Articulo("151515151515151","Contenedor de algo que sirve para guardar otra cosa","300","350","350","7","1","Linea Blanca");
+        Articulo prod15= new Articulo("161616161616161","Caja mil ocho mil","300","350","350","5","1","Linea Blanca");
+        Articulo prod16= new Articulo("171717171717171","Esto es una descripción de producto","300","350","350","3","1","Linea Blanca");
+        Articulo prod17= new Articulo("181818181818181","Esto es algo que no sé lo que es","300","350","350","23","1","Linea Blanca");
+        Articulo prod18= new Articulo("191919191919191","Descripción del un artículo de esta lista","300","350","350","8","1","Linea Blanca");
+        Articulo prod19= new Articulo("202020202020202","$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$","300","350","350","8","1","Linea Blanca");
+        Articulo prod20= new Articulo("212121212121212","%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%","300","350","350","9","1","Linea Blanca");
+        
+        
+        
+        
+        tabla.put("111111111111111",prod);
+        tabla.put("222222222222222",prod1);
+        tabla.put("333333333333333",prod2);
+        tabla.put("444444444444444",prod3);
+        tabla.put("555555555555555",prod4);
+        tabla.put("666666666666666",prod5);
+        tabla.put("777777777777777",prod6);
+        tabla.put("888888888888888",prod7);
+        tabla.put("999999999999999",prod8);
+        tabla.put("101010101010101",prod9);
+        tabla.put("11011011010011",prod10);
+        tabla.put("121212121212121",prod11);
+        tabla.put("131313131313131",prod12);
+        tabla.put("141414141414141",prod13);
+        tabla.put("151515151515151",prod14);
+        tabla.put("161616161616161",prod15);
+        tabla.put("171717171717171",prod16);
+        tabla.put("181818181818181",prod17);
+        tabla.put("191919191919191",prod18);
+        tabla.put("202020202020202",prod19);
+        tabla.put("212121212121212",prod20);
+        
+        
         ExportarExcel();
     }//GEN-LAST:event_BotonExportarExcelActionPerformed
 
@@ -714,7 +778,6 @@ public class Contador extends javax.swing.JFrame {
         }
         //</editor-fold>
         //</editor-fold>
-        
         
         
 

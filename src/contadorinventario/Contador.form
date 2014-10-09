@@ -178,7 +178,7 @@
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder position="1" title="Art&#xed;culos">
               <Font PropertyName="font" name="SansSerif" size="18" style="1"/>
-              <Color PropertyName="color" blue="ff" green="ff" id="white" palette="1" red="ff" type="palette"/>
+              <Color PropertyName="color" blue="0" green="0" id="black" palette="1" red="0" type="palette"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -192,13 +192,13 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="EtiquetaMostrar" alignment="1" max="32767" attributes="0"/>
                       <Component id="InsertarCodigo" alignment="1" max="32767" attributes="0"/>
                       <Group type="102" alignment="1" attributes="0">
                           <Component id="BotonAgregar" min="-2" pref="200" max="-2" attributes="0"/>
-                          <EmptySpace pref="26" max="32767" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                           <Component id="BotonEliminar" min="-2" pref="200" max="-2" attributes="0"/>
                       </Group>
+                      <Component id="EtiquetaMostrar" alignment="1" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -231,7 +231,7 @@
         <Component class="javax.swing.JLabel" name="EtiquetaMostrar">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Dialog" size="18" style="1"/>
+              <Font name="Dialog" size="20" style="1"/>
             </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -277,7 +277,7 @@
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="Lista de Art&#xed;culos">
               <Font PropertyName="font" name="SansSerif" size="18" style="1"/>
-              <Color PropertyName="color" blue="ff" green="ff" id="white" palette="1" red="ff" type="palette"/>
+              <Color PropertyName="color" blue="0" green="0" id="black" palette="1" red="0" type="palette"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -288,7 +288,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jScrollPane1" pref="406" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" pref="584" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -343,22 +343,22 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="BotonImportarExcel" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
-                  <Component id="BotonExportarExcel" min="-2" max="-2" attributes="0"/>
+                  <Component id="BotonImportarExcel" min="-2" pref="202" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="BotonExportarExcel" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
+              <Group type="102" alignment="1" attributes="0">
+                  <EmptySpace pref="32" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="BotonImportarExcel" alignment="3" min="-2" pref="65" max="-2" attributes="0"/>
                       <Component id="BotonExportarExcel" alignment="3" min="-2" pref="65" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="59" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -366,10 +366,13 @@
       <SubComponents>
         <Component class="javax.swing.JButton" name="BotonImportarExcel">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Dialog" size="14" style="1"/>
+            </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/Imagenes/Excel2.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Importar de Excel"/>
+            <Property name="iconTextGap" type="int" value="20"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BotonImportarExcelActionPerformed"/>
@@ -377,10 +380,13 @@
         </Component>
         <Component class="javax.swing.JButton" name="BotonExportarExcel">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Dialog" size="14" style="1"/>
+            </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/Imagenes/Excel.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Exportar a Excel"/>
+            <Property name="iconTextGap" type="int" value="20"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BotonExportarExcelActionPerformed"/>
