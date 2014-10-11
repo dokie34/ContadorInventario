@@ -591,8 +591,7 @@ public class Contador extends javax.swing.JFrame {
     }//GEN-LAST:event_MenuExportarExcelActionPerformed
 
     private void MenuaGuardarListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuaGuardarListaActionPerformed
-        // TODO add your handling code here:
-        
+        // TODO add your handling code here:    
         CSVWriter writer;
         String auxLlaves,auxValores;
         Enumeration<String> llaves =tabla.keys();
@@ -604,7 +603,6 @@ public class Contador extends javax.swing.JFrame {
         
         if (archivo!=null){
             try {
-
                 writer = new CSVWriter(new FileWriter(archivo+".txt"), '\t');
 
                 while (llaves.hasMoreElements()) {
@@ -664,12 +662,9 @@ public class Contador extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (BotonAgregar.isSelected()){
             BotonEliminar.setSelected(false);
-            //BotonAgregar.setForeground(Color.red);
             BotonAgregar.setFont(new Font("Dialog", 1, 22));
-            //BotonEliminar.setForeground(Color.black);
             BotonEliminar.setFont(new Font("Dialog", 1, 16));
         }else{
-            //BotonAgregar.setForeground(Color.black);
             BotonAgregar.setFont(new Font("Dialog", 1, 16));
         }
     }//GEN-LAST:event_BotonAgregarActionPerformed
@@ -678,12 +673,9 @@ public class Contador extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (BotonEliminar.isSelected()){
             BotonAgregar.setSelected(false);
-            //BotonEliminar.setForeground(Color.red);
             BotonEliminar.setFont(new Font("Dialog", 1, 22));
-            //BotonAgregar.setForeground(Color.black);
             BotonAgregar.setFont(new Font("Dialog", 1, 16));
         }else{
-            //BotonEliminar.setForeground(Color.black);
             BotonEliminar.setFont(new Font("Dialog", 1, 16));
         }
     }//GEN-LAST:event_BotonEliminarActionPerformed
